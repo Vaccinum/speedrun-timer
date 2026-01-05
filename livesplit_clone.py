@@ -1,63 +1,92 @@
-import time
 import tkinter as tk
+import time
 
-# ───────── State ─────────
+# --------------------
+# Timer state
+# --------------------
 running = False
-start_time = 0.0
-elapsed = 0.0
+start_time = 0
+elapsed = 0
 
-# ───────── Helpers ─────────
-def now():
-    if running:
-        return elapsed + (time.time() - start_time)
-    return elapsed
-
-def format_time(t):
-    return f"{t:0.2f}s"
-
-# ───────── Actions ─────────
+# --------------------
+# Timer logic
+# --------------------
 def toggle_timer(event=None):
     global running, start_time, elapsed
-    if running:
-        elapsed += time.time() - start_time
-        running = False
-    else:
-        start_time = time.time()
+
+    if not running:
+        start_time = time.time() - elapsed
         running = True
+    else:
+        elapsed = time.time() - start_time
+        running = False
 
 def reset_timer(event=None):
-    global running, elapsed
+    global running, start_time, elapsed
     running = False
-    elapsed = 0.0
-    label.config(text="0.00s")
+    start_time = 0
+    elapsed = 0
+    timer_label.config(text="0.00s")
 
-def update():
-    label.config(text=format_time(now()))
-    root.after(16, update)
+# --------------------
+# UI update loop
+# --------------------
+def update_timer():
+    if running:
+        current = time.time() - start_time
+        timer_label.config(text=f"{current:.2f}s")
+    root.after(10, update_timer)
 
-def close_app(event=None):
-    root.destroy()
-
-# ───────── UI ─────────
+# --------------------
+# Window
+# --------------------
 root = tk.Tk()
 root.title("Speedrun Timer")
-root.geometry("300x120")
-root.configure(bg="#0f0f0f")
+root.geometry("300x160")
+root.configure(bg="#0b0b0b")
 
-label = tk.Label(
+# --------------------
+# Timer display
+# --------------------
+timer_label = tk.Label(
     root,
     text="0.00s",
-    font=("Arial Black", 36),
+    font=("Arial", 32, "bold"),
     fg="#00ff88",
-    bg="#0f0f0f"
+    bg="#0b0b0b"
 )
-label.pack(expand=True)
+timer_label.pack(pady=15)
 
-# ───────── Keybinds (window-focused) ─────────
-root.bind("<Return>", toggle_timer)     # Enter
-root.bind("5", toggle_timer)            # 5 also toggles
-root.bind("<BackSpace>", reset_timer)   # Reset
-root.bind("<Escape>", close_app)        # Exit safely
+# --------------------
+# Buttons
+# --------------------
+btn_frame = tk.Frame(root, bg="#0b0b0b")
+btn_frame.pack()
 
-update()
+start_btn = tk.Button(
+    btn_frame,
+    text="Start / Split",
+    width=12,
+    command=toggle_timer
+)
+start_btn.grid(row=0, column=0, padx=5)
+
+reset_btn = tk.Button(
+    btn_frame,
+    text="Reset",
+    width=12,
+    command=reset_timer
+)
+reset_btn.grid(row=0, column=1, padx=5)
+
+# --------------------
+# Key bindings (NO ROOT NEEDED)
+# --------------------
+root.bind("<space>", toggle_timer)   # Space = Start / Split
+root.bind("<r>", reset_timer)        # R = Reset
+
+# --------------------
+# Start loop
+# --------------------
+update_timer()
 root.mainloop()
