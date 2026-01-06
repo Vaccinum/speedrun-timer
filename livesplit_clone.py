@@ -261,6 +261,7 @@ def update_timer():
 # Window setup
 # --------------------
 root = tk.Tk()
+root.iconphoto(False, tk.PhotoImage(file="icon.png"))
 root.title("Speedrun Timer")
 root.geometry("340x480")
 root.configure(bg=UI["bg_color"])
