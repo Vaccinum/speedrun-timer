@@ -1,0 +1,15 @@
+{
+    "keys": {
+        "start": "<space>",
+        "reset": "r",
+        "save": "s",
+        "toggle_ui": "u",
+        "fullscreen": "f",
+        "invert_colors": "i",
+        "hotkey_settings": "h"
+    },
+    "ui": {
+        "bg_color": "#111111",
+        "opacity": 0.95
+    }
+}
